@@ -1,13 +1,23 @@
 <template>
     <div>
         <div class="container">
+            <b-alert
+                    :variant="alert.type"
+                    dismissible
+                    fade
+                    :show="alert.show"
+                    @dismissed="alert.show = false"
+            >
+                {{ alert.text }}
+            </b-alert>
+
             <div class="row">
                 <div class="col-12">
                     <div class="card my-3">
                         <div class="card-header">
                             <div class="text-right">
                                 <template v-if="authenticated">
-                                    <router-link :to="{ name: 'home' }">
+                                    <router-link :to="{ name: 'home' }" class="mr-3">
                                         {{ $t('home') }}
                                     </router-link>
                                 </template>
@@ -19,6 +29,10 @@
                                         {{ $t('register') }}
                                     </router-link>
                                 </template>
+
+                                <b-link :to="{ name: 'orders' }" class="mr-3">Orders</b-link>
+
+                                <b-btn variant="success" v-b-modal.modal-new-order>Add order</b-btn>
                             </div>
                         </div>
 
@@ -46,8 +60,93 @@
             </div>
         </div>
 
-        <b-modal id="modal-image" title="" size="lg" hide-footer @close="modalcontent = null">
+        <b-modal id="modal-image"
+                 size="lg"
+                 class="p-0"
+                 hide-footer
+                 @close="modalcontent = null"
+        >
             <img class="card-img-top" :src="`https://picsum.photos/600/400/?random&dummyParam=${modalcontent}`" :alt="modalcontent">
+        </b-modal>
+
+        <b-modal id="modal-new-order" title="New order" size="md" hide-footer>
+            <b-form
+                    @submit="onSubmit"
+                    @reset="onReset"
+            >
+                <b-form-group
+                        id="input-group-1"
+                        label="First name:"
+                        label-for="input-1"
+                >
+                    <b-form-input
+                            id="input-1"
+                            v-model="form.firstname"
+                            type="text"
+                            required
+                            placeholder="Enter firstname"
+                    ></b-form-input>
+                </b-form-group>
+
+                <b-form-group
+                        id="input-group-2"
+                        label="Second name:"
+                        label-for="input-2"
+                >
+                    <b-form-input
+                            id="input-2"
+                            v-model="form.secondname"
+                            type="text"
+                            required
+                            placeholder="Enter secondname"
+                    ></b-form-input>
+                </b-form-group>
+
+                <b-form-group
+                        id="input-group-3"
+                        label="Email address:"
+                        label-for="input-3"
+                        description="We'll never share your email with anyone else."
+                >
+                    <b-form-input
+                            id="input-3"
+                            v-model="form.email"
+                            type="email"
+                            required
+                            placeholder="Enter email"
+                    ></b-form-input>
+                </b-form-group>
+
+                <b-form-group
+                        id="input-group-4"
+                        label="Phone:"
+                        label-for="input-4"
+                >
+                    <b-form-input
+                            id="input-4"
+                            v-model="form.phone"
+                            type="text"
+                            required
+                            placeholder="Enter phone"
+                    ></b-form-input>
+                </b-form-group>
+
+                <b-form-group
+                        id="input-group-5"
+                        label="Education:"
+                        label-for="input-5"
+                >
+                    <b-form-select
+                            id="input-5"
+                            v-model="form.education"
+                            :options="educationList"
+                            required
+                    ></b-form-select>
+                </b-form-group>
+
+                <b-button type="submit" variant="primary">Submit</b-button>
+                <b-button type="reset" variant="danger">Reset</b-button>
+            </b-form>
         </b-modal>
     </div>
 </template>
@@ -56,13 +155,30 @@
   import { mapGetters } from 'vuex'
 
   export default {
-    layout: 'basic',
     metaInfo () {
-      return {title: this.$t('home')}
+      return { title: this.$t('home') }
     },
     data: () => ({
+      alert: {
+        show: false,
+        type: 'info',
+        text: ''
+      },
       title: window.config.appName,
-      modalcontent: null
+      modalcontent: null,
+      form: {
+        firstname: '',
+        secondname: '',
+        email: '',
+        phone: '',
+        education: null
+      },
+      educationList: [
+        { text: 'Level of education', value: null },
+        { text: 'Bachelor', value: 1 },
+        { text: 'Master', value: 2 },
+        { text: 'PhD', value: 3 }
+      ]
     }),
     computed: mapGetters({
       authenticated: 'auth/check',
@@ -70,6 +186,36 @@
     }),
     created () {
       this.$store.dispatch('user/getContents')
+    },
+    methods: {
+      onSubmit (evt) {
+        evt.preventDefault()
+
+        this.$store.dispatch('user/storeOrder', this.form)
+          .then((response) => {
+            this.$root.$emit('bv::hide::modal', 'modal-new-order')
+
+            if (response.status === 200) {
+              this.messageAlert('success', 'Ваша заявка отправлена!')
+            } else {
+              this.messageAlert('danger', response.data)
+            }
+          })
+      },
+      onReset (evt) {
+        evt.preventDefault()
+
+        this.form.firstname = ''
+        this.form.secondname = ''
+        this.form.email = ''
+        this.form.phone = ''
+        this.form.education = null
+      },
+      messageAlert(type, text) {
+        this.alert.show = true
+        this.alert.type = type
+        this.alert.text = text
+      }
     }
   }
 </script>

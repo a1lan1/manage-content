@@ -50,6 +50,16 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     ];
 
     /**
+     * Relation Order model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
      * Get the profile photo URL attribute.
      *
      * @return string

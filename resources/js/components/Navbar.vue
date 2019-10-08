@@ -11,9 +11,12 @@
 
       <div id="navbarToggler" class="collapse navbar-collapse">
         <ul class="navbar-nav">
-          <locale-dropdown />
             <li class="nav-item">
-                <a class="nav-link" href="#">Orders</a>
+                <b-link class="nav-link" to="/orders">Orders</b-link>
+            </li>
+
+            <li class="nav-item">
+                <b-link class="nav-link" to="/contents">Contents</b-link>
             </li>
         </ul>
 

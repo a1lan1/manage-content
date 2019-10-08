@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\ContentService;
-use Illuminate\Http\Request;
 
 class ContentController extends Controller
 {
@@ -28,8 +27,6 @@ class ContentController extends Controller
      */
     public function getContents()
     {
-        $contents = $this->contentService->getContents();
-
-        return response()->json($contents);
+        return response()->json($this->contentService->getContents());
     }
 }

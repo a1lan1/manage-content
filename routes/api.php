@@ -40,3 +40,8 @@ Route::group(['middleware' => 'guest:api'], function () {
 
 // Contents
 Route::get('contents', 'ContentController@getContents');
+
+// Orders
+Route::get('orders', 'OrderController@getOrders');
+Route::post('orders', 'OrderController@storeOrder');
+Route::post('orders/delete', 'OrderController@deleteOrder');

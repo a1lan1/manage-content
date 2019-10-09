@@ -10,7 +10,7 @@ export const UPDATE_USER = 'UPDATE_USER'
 export const SET_LOCALE = 'SET_LOCALE'
 
 // user.js
-export const FETCH_CONTENTS = 'FETCH_CONTENTS'
+export const FETCH_EVENTS = 'FETCH_EVENTS'
 export const FETCH_ORDERS = 'FETCH_ORDERS'
 export const FETCH_ORDER = 'FETCH_ORDER'
 export const STORE_ORDER = 'STORE_ORDER'

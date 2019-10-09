@@ -45,6 +45,16 @@ class Order extends Model
     }
 
     /**
+     * Relation Event model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    /**
      * Education list
      *
      * @return array

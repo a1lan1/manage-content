@@ -15,6 +15,6 @@ $factory->define(Order::class, function (Faker $faker) {
         'education' => $faker->numberBetween(1, count(Order::educationsList())),
         'ip' => $faker->ipv4(),
         'agent' => $faker->userAgent(),
-        'user_id' => User::first()->id,
+        'user_id' => User::inRandomOrder()->first()->id,
     ];
 });

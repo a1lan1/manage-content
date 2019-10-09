@@ -12,11 +12,11 @@
       <div id="navbarToggler" class="collapse navbar-collapse">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <b-link class="nav-link" to="/orders">Orders</b-link>
+                <b-link class="nav-link" :to="{ name: 'events' }">Manage Events</b-link>
             </li>
 
             <li class="nav-item">
-                <b-link class="nav-link" to="/contents">Contents</b-link>
+                <b-link class="nav-link" :to="{ name: 'orders' }">Manage Orders</b-link>
             </li>
         </ul>
 

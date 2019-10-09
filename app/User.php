@@ -13,6 +13,9 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
 {
     use Notifiable;
 
+    const ROLE_MEMBER = 0;
+    const ROLE_ADMIN = 1;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -57,6 +60,16 @@ class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Relation Event model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 
     /**

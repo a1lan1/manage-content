@@ -13,43 +13,30 @@
 
             <div class="row">
                 <div class="col-12">
-                    <div class="card my-3">
-                        <div class="card-header">
-                            <div class="text-right">
-                                <template v-if="authenticated">
-                                    <router-link :to="{ name: 'home' }" class="mr-3">
-                                        {{ $t('home') }}
-                                    </router-link>
-                                </template>
-                                <template v-else>
-                                    <router-link :to="{ name: 'login' }" class="mr-3">
-                                        {{ $t('login') }}
-                                    </router-link>
-                                    <router-link :to="{ name: 'register' }">
-                                        {{ $t('register') }}
-                                    </router-link>
-                                </template>
-
-                                <b-link :to="{ name: 'orders' }" class="mr-3">Orders</b-link>
-
-                                <b-btn variant="success" v-b-modal.modal-new-order>Add order</b-btn>
-                            </div>
-                        </div>
-
+                    <div class="card">
                         <div class="container">
                             <div class="row">
                                 <div
-                                    v-for="(content, index) in contents"
+                                    v-for="(event, index) in events"
                                     :key="index"
                                     class="col-12 col-sm-6 col-md-4 col-lg-3 my-2"
                                 >
                                     <div class="card shadow">
                                         <b-link v-b-modal.modal-image>
-                                            <img class="card-img-top" :src="content.image" :alt="content"  @click="modalcontent = index">
+                                            <img class="card-img-top" :src="event.image" :alt="event"  @click="modalEvent = index">
                                         </b-link>
 
                                         <div class="card-body">
-                                            <p class="card-text">{{ content.title }}</p>
+                                            <p class="card-text">{{ event.title }}</p>
+                                            <b-btn
+                                                    v-if="authenticated"
+                                                    variant="success"
+                                                    block
+                                                    v-b-modal.modal-new-order
+                                                    @click="form.event = event.id"
+                                            >
+                                                Add order
+                                            </b-btn>
                                         </div>
                                     </div>
                                 </div>
@@ -64,9 +51,9 @@
                  size="lg"
                  class="p-0"
                  hide-footer
-                 @close="modalcontent = null"
+                 @close="modalEvent = null"
         >
-            <img class="card-img-top" :src="`https://picsum.photos/600/400/?random&dummyParam=${modalcontent}`" :alt="modalcontent">
+            <img class="card-img-top" :src="`https://picsum.photos/600/400/?random&dummyParam=${modalEvent}`" :alt="modalEvent">
         </b-modal>
 
         <b-modal id="modal-new-order" title="New order" size="md" hide-footer>
@@ -144,8 +131,20 @@
                     ></b-form-select>
                 </b-form-group>
 
-                <b-button type="submit" variant="primary">Submit</b-button>
-                <b-button type="reset" variant="danger">Reset</b-button>
+                <b-button
+                        :disabled="loading"
+                        type="submit"
+                          variant="primary"
+                >
+                    {{ loading ? 'Отправляем...' : 'Отправить' }}
+                </b-button>
+
+                <b-button
+                        type="reset"
+                        variant="danger"
+                >
+                    Reset
+                </b-button>
             </b-form>
         </b-modal>
     </div>
@@ -165,8 +164,10 @@
         text: ''
       },
       title: window.config.appName,
-      modalcontent: null,
+      modalEvent: null,
+      loading: false,
       form: {
+        event: null,
         firstname: '',
         secondname: '',
         email: '',
@@ -182,18 +183,21 @@
     }),
     computed: mapGetters({
       authenticated: 'auth/check',
-      contents: 'user/contents',
+      user: 'auth/user',
+      events: 'user/events',
     }),
     created () {
-      this.$store.dispatch('user/getContents')
+      this.$store.dispatch('user/getEvents')
     },
     methods: {
       onSubmit (evt) {
+        this.loading = true
         evt.preventDefault()
 
         this.$store.dispatch('user/storeOrder', this.form)
           .then((response) => {
             this.$root.$emit('bv::hide::modal', 'modal-new-order')
+            this.loading = false
 
             if (response.status === 200) {
               this.messageAlert('success', 'Ваша заявка отправлена!')

@@ -6,6 +6,7 @@ export default [
   { path: '/', name: 'welcome', component: page('welcome.vue') },
   { path: '/home', name: 'home', component: page('home.vue') },
 
+  { path: '/events', name: 'events', component: page('events.vue') },
   { path: '/orders', name: 'orders', component: page('orders.vue') },
 
   { path: '/login', name: 'login', component: page('auth/login.vue') },

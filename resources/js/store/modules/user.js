@@ -1,26 +1,26 @@
 import axios from 'axios'
 import * as types from '../mutation-types'
 
-const routeContents = '/api/contents'
+const routeEvents = '/api/events'
 const routeOrders = '/api/orders'
 const routeDeleteOrder = '/api/orders/delete'
 
 // state
 export const state = {
-  contents: null,
+  events: null,
   orders: null
 }
 
 // getters
 export const getters = {
-  contents: state => state.contents,
+  events: state => state.events,
   orders: state => state.orders
 }
 
 // mutations
 export const mutations = {
-  [types.FETCH_CONTENTS] (state, { contents }) {
-    state.contents = contents
+  [types.FETCH_EVENTS] (state, { events }) {
+    state.events = events
   },
   [types.FETCH_ORDERS] (state, { orders }) {
     state.orders = orders
@@ -32,11 +32,11 @@ export const mutations = {
 
 // actions
 export const actions = {
-  async getContents ({ commit }) {
+  async getEvents ({ commit }) {
     try {
-      const { data } = await axios.get(routeContents)
+      const { data } = await axios.get(routeEvents)
 
-      commit(types.FETCH_CONTENTS, { contents: data })
+      commit(types.FETCH_EVENTS, { events: data })
     } catch (error) {
       console.log(error)
     }

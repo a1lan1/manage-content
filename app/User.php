@@ -4,17 +4,15 @@ namespace App;
 
 use App\Notifications\VerifyEmail;
 use App\Notifications\ResetPassword;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements JWTSubject //, MustVerifyEmail
+class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable;
-
-    const ROLE_MEMBER = 0;
-    const ROLE_ADMIN = 1;
+    use Notifiable,
+        HasRoles;
 
     /**
      * The attributes that are mass assignable.

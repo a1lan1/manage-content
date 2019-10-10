@@ -10,14 +10,16 @@
       </button>
 
       <div id="navbarToggler" class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <b-link class="nav-link" :to="{ name: 'events' }">Manage Events</b-link>
-            </li>
+        <ul v-if="user" class="navbar-nav">
+            <template v-if="user && user.role === 'admin' || user.role === 'superadmin'">
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{ name: 'events' }">Manage Events</b-link>
+                </li>
 
-            <li class="nav-item">
-                <b-link class="nav-link" :to="{ name: 'orders' }">Manage Orders</b-link>
-            </li>
+                <li class="nav-item">
+                    <b-link class="nav-link" :to="{ name: 'orders' }">Manage Orders</b-link>
+                </li>
+            </template>
         </ul>
 
         <ul class="navbar-nav ml-auto">

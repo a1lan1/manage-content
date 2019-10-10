@@ -47,7 +47,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $appends = [
-        'photo_url',
+        'photo_url', 'role'
     ];
 
     /**
@@ -125,5 +125,15 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * Accessor User role
+     *
+     * @return string
+     */
+    public function getRoleAttribute()
+    {
+        return $this->roles()->first()->name;
     }
 }

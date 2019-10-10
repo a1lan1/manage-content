@@ -6,10 +6,16 @@ use Illuminate\Http\Request;
 Route::get('events', 'EventController@getEvents');
 
 Route::group(['middleware' => 'auth:api'], function () {
-    // Orders
-    Route::get('orders', 'OrderController@getOrders');
-    Route::post('orders', 'OrderController@storeOrder');
-    Route::post('orders/delete', 'OrderController@deleteOrder');
+    Route::get('user-events', 'EventController@userEvents');
+    Route::post('user-events/delete', 'EventController@deleteEvent');
+
+    // Admin routes
+    Route::group(['middleware' => ['role:admin|superadmin']], function () {
+        // Orders
+        Route::get('orders', 'OrderController@getOrders');
+        Route::post('orders', 'OrderController@storeOrder');
+        Route::post('orders/delete', 'OrderController@deleteOrder');
+    });
 
     // Logout
     Route::post('logout', 'Auth\LoginController@logout');

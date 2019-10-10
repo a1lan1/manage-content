@@ -25,7 +25,7 @@ class CreateOrdersTable extends Migration
             $table->bigInteger('user_id')->unsigned()->index()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->bigInteger('event_id')->unsigned()->index()->nullable();
-            $table->foreign('event_id')->references('id')->on('events');
+            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->timestamps();
         });
     }

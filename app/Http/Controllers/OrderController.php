@@ -33,6 +33,16 @@ class OrderController extends Controller
     }
 
     /**
+     * User orders
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function userOrders()
+    {
+        return response()->json($this->orderService->userOrders());
+    }
+
+    /**
      * Add new order
      *
      * @param OrderRequest $request
@@ -44,7 +54,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Add new order
+     * Delete order
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

@@ -46,7 +46,6 @@
             </b-alert>
             
             <b-table
-                    v-if="!showEditForm"
                     show-empty
                     small
                     stacked="md"
@@ -63,13 +62,8 @@
                 </template>
 
                 <template v-slot:cell(actions)="row">
-
                     <b-button size="sm" @click="row.toggleDetails">
                         {{ row.detailsShowing ? 'Hide' : 'Show' }}
-                    </b-button>
-
-                    <b-button variant="success" size="sm" @click="editEvent(row.item.id)">
-                        Edit
                     </b-button>
 
                     <b-button variant="danger" size="sm" @click="deleteEvent(row.item.id)">
@@ -85,38 +79,17 @@
                     </b-card>
                 </template>
             </b-table>
-            <b-form v-else>
-                <b-form-group
-                        label="Title:"
-                        label-for="input-1"
-                >
-                    <b-form-input
-                            id="input-1"
-                            v-model="event.title"
-                            type="text"
-                            required
-                            placeholder="Enter title"
-                    ></b-form-input>
-                </b-form-group>
-
-                <b-button
-                        variant="primary"
-                        @click="saveEvent"
-                >
-                    Сохранить
-                </b-button>
-            </b-form>
         </b-container>
     </b-card>
 </template>
 
 <script>
   export default {
+    middleware: 'admin',
     name: 'events',
     data () {
       return {
         event: {},
-        showEditForm: false,
         alert: {
           show: false,
           type: 'info',
@@ -151,26 +124,11 @@
       }
     },
     created () {
-      this.$store.dispatch('user/getEvents')
+      this.$store.dispatch('user/getUserEvents')
     },
     methods: {
-      editEvent (id) {
-        this.showEditForm = true
-        this.event = this.events.find(event => event.id === id)
-      },
-      saveEvent () {
-        this.$store.dispatch('user/storeEvent', this.event)
-          .then((response) => {
-            if (response.status === 200) {
-              this.showEditForm = false
-              this.messageAlert('success', 'Данные успешно сохранены!')
-            } else {
-              this.messageAlert('danger', response.data)
-            }
-          })
-      },
       deleteEvent (id) {
-        this.$store.dispatch('user/deleteEvent', {id: id})
+        this.$store.dispatch('user/deleteEvent', { id: id })
       },
       messageAlert(type, text) {
         this.alert.show = true

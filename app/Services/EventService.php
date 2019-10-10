@@ -23,10 +23,39 @@ class EventService
     /**
      * Events
      *
-     * @return Event
+     * @return Event[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     public function getEvents()
     {
-        return $this->event->inRandomOrder()->with('orders', 'user')->get();
+        return $this->event->with('orders', 'user')->get();
+    }
+
+    /**
+     * User events
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function userEvents()
+    {
+        return \Auth::user()->events()->with('orders')->get();
+    }
+
+    /**
+     * Delete event
+     *
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function deleteEvent($id)
+    {
+//        if (\Auth::user()->role === 'superadmin') {
+//            $this->event->destroy($id);
+//        } else {
+//            \Auth::user()->events()->findOrFail($id)->delete();
+//        }
+
+        $this->event->destroy($id);
+
+        return $this->userEvents();
     }
 }

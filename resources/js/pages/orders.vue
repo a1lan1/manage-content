@@ -154,8 +154,6 @@
                     ></b-form-select>
                 </b-form-group>
 
-
-
                 <b-form-group
                         label="ip:"
                         label-for="input-6"
@@ -195,6 +193,7 @@
 
 <script>
   export default {
+    middleware: 'admin',
     name: 'orders',
     data () {
       return {

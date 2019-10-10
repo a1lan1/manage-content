@@ -35,6 +35,16 @@ class OrderService
     }
 
     /**
+     * User orders
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function userOrders()
+    {
+        return \Auth::user()->orders()->with('event')->get();
+    }
+
+    /**
      * Add new order
      *
      * @param array $data

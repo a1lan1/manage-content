@@ -17,6 +17,7 @@
                         <div class="container">
                             <div class="row">
                                 <div
+                                    v-if="events"
                                     v-for="(event, index) in events"
                                     :key="index"
                                     class="col-12 col-sm-6 col-md-4 col-lg-3 my-2"
@@ -39,6 +40,9 @@
                                             </b-btn>
                                         </div>
                                     </div>
+                                </div>
+                                <div v-else>
+                                    <b-spinner label="Spinning"></b-spinner> ...loading, please wait!
                                 </div>
                             </div>
                         </div>

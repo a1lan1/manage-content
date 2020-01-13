@@ -53,7 +53,6 @@ class OrderService
     public function storeOrder(array $data)
     {
         $eventId = Arr::pull($data, 'event');
-
         $order = \Auth::user()->orders()->updateOrCreate($data);
 
         $order->event()->associate($eventId)->save();
@@ -67,10 +66,10 @@ class OrderService
     /**
      * Delete Order
      *
-     * @param $id
+     * @param int $id
      * @return Order[]|\Illuminate\Database\Eloquent\Collection
      */
-    public function deleteOrder($id)
+    public function deleteOrder(int $id)
     {
         $this->order->destroy($id);
 

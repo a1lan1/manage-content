@@ -1,3 +1,8 @@
+## Start App
+```
+make i
+```
+
 ## Users data
 ```
 superadmin@admin.io

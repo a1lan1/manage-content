@@ -1,4 +1,4 @@
-install:
+i:
 	composer install && npm i && php artisan migrate:refresh --seed
 
 start:

@@ -15,13 +15,13 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('firstname');
-            $table->string('secondname');
+            $table->string('firstname')->nullable();
+            $table->string('secondname')->nullable();
             $table->string('email');
-            $table->string('phone');
-            $table->string('education');
-            $table->string('ip');
-            $table->string('agent');
+            $table->string('phone')->nullable();
+            $table->string('education')->nullable();
+            $table->string('ip')->nullable();
+            $table->string('agent')->nullable();
             $table->bigInteger('user_id')->unsigned()->index()->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->bigInteger('event_id')->unsigned()->index()->nullable();

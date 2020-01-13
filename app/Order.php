@@ -20,21 +20,6 @@ class Order extends Model
     ];
 
     /**
-     * Save user ip & agent
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Model $model) {
-            $model->ip = request()->getClientIp();
-            $model->agent = request()->header('user_agent');
-        });
-    }
-
-    /**
      * Relation User model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

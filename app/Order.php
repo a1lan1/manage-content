@@ -20,7 +20,7 @@ class Order extends Model
     ];
 
     /**
-     * Save user ip & user agent
+     * Save user ip & agent
      *
      * @return void
      */

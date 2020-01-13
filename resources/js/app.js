@@ -6,6 +6,7 @@ import App from '~/components/App'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import VueLazyload from 'vue-lazyload'
 
 import '~/plugins'
 import '~/components'
@@ -13,6 +14,7 @@ import '~/components'
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
+Vue.use(VueLazyload)
 
 /* eslint-disable no-new */
 new Vue({

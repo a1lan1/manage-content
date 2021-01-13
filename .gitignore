@@ -15,3 +15,5 @@ npm-debug.log
 yarn-error.log
 phpunit.dusk.xml
 *.code-workspace
+.phpstorm.meta.php
+_ide_helper.php

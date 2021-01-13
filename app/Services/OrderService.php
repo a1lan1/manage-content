@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Order;
+use App\Models\Order;
 use Illuminate\Support\Arr;
 use App\Mail\NewOrderMember;
 use App\Mail\NewOrderOrganizer;

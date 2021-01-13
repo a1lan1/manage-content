@@ -1,7 +1,7 @@
 <?php
 
-use App\Event;
-use App\Order;
+use App\Models\Event;
+use App\Models\Order;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 

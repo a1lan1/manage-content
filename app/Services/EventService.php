@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Event;
+use App\Models\Event;
 
 class EventService
 {

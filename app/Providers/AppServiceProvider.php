@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Order;
+use App\Models\Order;
 use App\Observers\OrderObserver;
 use Laravel\Dusk\DuskServiceProvider;
 use Illuminate\Support\Facades\Schema;

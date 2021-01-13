@@ -34,18 +34,18 @@ export const mutations = {
 
 // actions
 export const actions = {
-  async getEvents ({ commit }) {
+  async getEvents ({ commit }, page = 1) {
     try {
-      const { data } = await axios.get(routeEvents)
+      const { data } = await axios.get(routeEvents + '?page=' + page)
 
       commit(types.FETCH_EVENTS, { events: data })
     } catch (error) {
       console.log(error)
     }
   },
-  async getUserEvents ({ commit }) {
+  async getUserEvents ({ commit }, page = 1) {
     try {
-      const { data } = await axios.get(routeUserEvents)
+      const { data } = await axios.get(routeUserEvents + '?page=' + page)
 
       commit(types.FETCH_EVENTS, { events: data })
     } catch (error) {
@@ -61,9 +61,9 @@ export const actions = {
       console.log(error)
     }
   },
-  async getOrders ({ commit }) {
+  async getOrders ({ commit }, page = 1) {
     try {
-      const { data } = await axios.get(routeOrders)
+      const { data } = await axios.get(routeOrders + '?page=' + page)
 
       commit(types.FETCH_ORDERS, { orders: data })
     } catch (error) {
@@ -85,5 +85,11 @@ export const actions = {
     } catch (error) {
       console.log(error)
     }
+  },
+  resetEvents ({ commit }) {
+    commit(types.FETCH_EVENTS, { events: null })
+  },
+  resetOrders ({ commit }) {
+    commit(types.FETCH_ORDERS, { orders: null })
   }
 }

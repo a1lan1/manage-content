@@ -71,7 +71,7 @@ class RegisterController extends Controller
             'password' => bcrypt($data['password']),
         ]);
 
-        $roleToAssign = Role::findByName('user', 'api');
+        $roleToAssign = Role::findByName(Role::ROLE_USER, 'api');
         $user->assignRole($roleToAssign);
 
         return $user;

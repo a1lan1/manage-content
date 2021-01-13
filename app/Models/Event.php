@@ -4,9 +4,21 @@ namespace App\Models;
 
 use App\Scopes\ImageScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Event extends Model
 {
+    /**
+     * Fillable fields
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'title',
+        'image',
+    ];
+
     /**
      * Add global scope
      *
@@ -20,21 +32,17 @@ class Event extends Model
     }
 
     /**
-     * Relation User model
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Relation Order model
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }

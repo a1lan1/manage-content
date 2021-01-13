@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
@@ -16,35 +17,37 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
-        'firstname', 'secondname', 'email', 'phone', 'education', 'ip', 'agent'
+        'firstname',
+        'secondname',
+        'email',
+        'phone',
+        'education',
+        'ip',
+        'agent',
     ];
 
     /**
-     * Relation User model
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     /**
-     * Relation Event model
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function event()
+    public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
     }
 
     /**
-     * Education list
+     * Education types list
      *
      * @return array
      */
-    public static function educationsList()
+    public static function educationsList(): array
     {
         return [
             self::EDUCATION_BACHELOR => 'Bachelor',

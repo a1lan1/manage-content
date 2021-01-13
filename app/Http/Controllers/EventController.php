@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\EventService;
+use Illuminate\Http\JsonResponse;
 
 class EventController extends Controller
 {
@@ -22,32 +23,26 @@ class EventController extends Controller
     }
 
     /**
-     * Events
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function getEvents()
+    public function getEvents(): JsonResponse
     {
         return response()->json($this->eventService->getEvents());
     }
 
     /**
-     * User events
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function userEvents()
+    public function userEvents(): JsonResponse
     {
         return response()->json($this->eventService->userEvents());
     }
 
     /**
-     * Delete event
-     *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function deleteEvent(Request $request)
+    public function deleteEvent(Request $request): JsonResponse
     {
         return response()->json($this->eventService->deleteEvent($request->id));
     }

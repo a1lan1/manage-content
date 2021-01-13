@@ -4,12 +4,13 @@ namespace App\Services;
 
 use App\Models\Order;
 use Illuminate\Support\Arr;
-use App\Mail\NewOrderMember;
-use App\Mail\NewOrderOrganizer;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class OrderService
 {
+    const PER_PAGE = 10;
+
     /**
      * @var Order
      */
@@ -25,51 +26,54 @@ class OrderService
     }
 
     /**
-     * Get orders
-     *
-     * @return Order[]|\Illuminate\Database\Eloquent\Collection
+     * @return LengthAwarePaginator
      */
-    public function getOrders()
+    public function getOrders(): LengthAwarePaginator
     {
-        return $this->order->all();
+        return $this->order
+            ->select(['id', 'firstname', 'secondname', 'email', 'phone', 'education'])
+            ->latest()
+            ->paginate(self::PER_PAGE);
     }
 
     /**
-     * User orders
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return LengthAwarePaginator
      */
-    public function userOrders()
+    public function userOrders(): LengthAwarePaginator
     {
-        return \Auth::user()->orders()->with('event')->get();
+        return auth()->user()->orders()
+            ->select(['id', 'firstname', 'secondname', 'email', 'phone', 'education'])
+            ->with([
+                'event' => function ($query) {
+                    $query->select(['id', 'title', 'image']);
+                }
+            ])
+            ->latest()
+            ->paginate(self::PER_PAGE);
     }
 
     /**
-     * Add new order
-     *
      * @param array $data
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
-    public function storeOrder(array $data)
+    public function storeOrder(array $data): Model
     {
         $eventId = Arr::pull($data, 'event');
-        $order = \Auth::user()->orders()->updateOrCreate($data);
+
+        $order = auth()->user()->is_adminable
+            ? $this->order->updateOrCreate($data)
+            : auth()->user()->orders()->updateOrCreate($data);
 
         $order->event()->associate($eventId)->save();
-
-        Mail::to(\Auth::user())->send(new NewOrderMember($order));
-        Mail::to($order->event->user)->send(new NewOrderOrganizer($order));
 
         return $order;
     }
 
     /**
-     * Delete Order
-     *
      * @param int $id
-     * @return Order[]|\Illuminate\Database\Eloquent\Collection
+     * @return LengthAwarePaginator
      */
-    public function deleteOrder(int $id)
+    public function deleteOrder(int $id): LengthAwarePaginator
     {
         $this->order->destroy($id);
 

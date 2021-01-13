@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use App\Models\Event;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EventService
 {
+    const PER_PAGE = 12;
+
     /**
      * @var Event
      */
@@ -21,41 +24,48 @@ class EventService
     }
 
     /**
-     * Events
-     *
-     * @return Event[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return LengthAwarePaginator
      */
-    public function getEvents()
+    public function getEvents(): LengthAwarePaginator
     {
-        return $this->event->with('orders', 'user')->get();
+        return $this->event
+            ->with([
+                'orders' => function ($query) {
+                    $query->select(['id', 'firstname', 'secondname', 'email', 'phone', 'education']);
+                },
+                'user' => function ($query) {
+                    $query->select(['id', 'name', 'email']);
+                }
+            ])
+            ->select(['id', 'title', 'image'])
+            ->latest()
+            ->paginate(self::PER_PAGE);
     }
 
     /**
-     * User events
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return LengthAwarePaginator
      */
-    public function userEvents()
+    public function userEvents(): LengthAwarePaginator
     {
-        return \Auth::user()->events()->with('orders')->get();
+        return auth()->user()->events()
+            ->with([
+                'orders' => function ($query) {
+                    $query->select(['id', 'firstname', 'secondname', 'email', 'phone', 'education']);
+                }
+            ])
+            ->select(['id', 'title', 'image'])
+            ->latest()
+            ->paginate(self::PER_PAGE);
     }
 
     /**
-     * Delete event
-     *
      * @param $id
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return LengthAwarePaginator
      */
-    public function deleteEvent($id)
+    public function deleteEvent($id): LengthAwarePaginator
     {
-//        if (\Auth::user()->role === 'superadmin') {
-//            $this->event->destroy($id);
-//        } else {
-//            \Auth::user()->events()->findOrFail($id)->delete();
-//        }
-
         $this->event->destroy($id);
 
-        return $this->userEvents();
+        return $this->getEvents();
     }
 }

@@ -6,34 +6,13 @@
   >
     <template v-slot:header>
       <b-row>
-        <b-col cols="12" class="text-right">
-          <b-form-group class="mb-0">
-            <b-form-select
-              v-model="perPage"
-              size="sm"
-              :options="pageOptions"
-            />
-          </b-form-group>
+        <b-col cols="12">
+          Events
         </b-col>
       </b-row>
     </template>
 
-    <template v-slot:footer>
-      <b-row v-if="events && events.length > perPage">
-        <b-col>
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            align="fill"
-            size="sm"
-            class="my-0"
-          />
-        </b-col>
-      </b-row>
-    </template>
-
-    <b-container fluid>
+    <b-container>
       <b-alert
         :variant="alert.type"
         dismissible
@@ -49,13 +28,8 @@
         show-empty
         small
         stacked="md"
-        :items="events"
+        :items="items"
         :fields="fields"
-        :current-page="currentPage"
-        :per-page="perPage"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        :sort-direction="sortDirection"
       >
         <template v-slot:cell(image)="row">
           <img
@@ -87,10 +61,28 @@
         </template>
       </b-table>
     </b-container>
+
+    <template v-slot:footer>
+      <b-row>
+        <b-col>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
+            size="sm"
+            class="my-0"
+            @change="paginationEvent"
+          />
+        </b-col>
+      </b-row>
+    </template>
   </b-card>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   middleware: 'admin',
   name: 'Events',
@@ -115,25 +107,29 @@ export default {
         { key: 'actions', label: 'Actions' }
       ],
       currentPage: 1,
-      perPage: 10,
-      pageOptions: [10, 25, 50],
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc'
+      totalRows: 0,
+      perPage: 10
     }
   },
   computed: {
-    totalRows () {
-      return this.events ? this.events.length : 0
-    },
-    events: function () {
-      return this.$store.state.user.events
+    ...mapGetters({
+      data: 'user/events'
+    }),
+    items () {
+      return this.data ? this.data.data : []
     }
   },
   created () {
-    this.$store.dispatch('user/getUserEvents')
+    this.getEvents()
+  },
+  beforeDestroy () {
+    this.$store.dispatch('user/resetEvents')
   },
   methods: {
+    getEvents () {
+      this.$store.dispatch('user/getUserEvents', this.currentPage)
+        .then(() => this.setPaginate())
+    },
     deleteEvent (id) {
       this.$store.dispatch('user/deleteEvent', { id: id })
     },
@@ -141,6 +137,15 @@ export default {
       this.alert.show = true
       this.alert.type = type
       this.alert.text = text
+    },
+    setPaginate () {
+      this.totalRows = this.data.total
+      this.currentPage = this.data.current_page
+      this.perPage = this.data.per_page
+    },
+    paginationEvent (page) {
+      this.currentPage = page
+      this.getOrders()
     }
   }
 }

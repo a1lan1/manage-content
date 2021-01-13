@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 Route::get('events', 'EventController@getEvents');
 
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::get('user-events', 'EventController@userEvents');
+    Route::get('user-events', 'EventController@getEvents');
     Route::post('user-events/delete', 'EventController@deleteEvent');
 
     // Admin routes

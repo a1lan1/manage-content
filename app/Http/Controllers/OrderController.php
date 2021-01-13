@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewOrderMember;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\OrderRequest;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -23,43 +26,39 @@ class OrderController extends Controller
     }
 
     /**
-     * Orders
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function getOrders()
+    public function getOrders(): JsonResponse
     {
         return response()->json($this->orderService->getOrders());
     }
 
     /**
-     * User orders
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function userOrders()
+    public function userOrders(): JsonResponse
     {
         return response()->json($this->orderService->userOrders());
     }
 
     /**
-     * Add new order
-     *
      * @param OrderRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function storeOrder(OrderRequest $request)
+    public function storeOrder(OrderRequest $request): JsonResponse
     {
-        return response()->json($this->orderService->storeOrder($request->all()));
+        $order = $this->orderService->storeOrder($request->all());
+
+        Mail::to(auth()->user())->send(new NewOrderMember($order));
+
+        return response()->json($order);
     }
 
     /**
-     * Delete order
-     *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function deleteOrder(Request $request)
+    public function deleteOrder(Request $request): JsonResponse
     {
         return response()->json($this->orderService->deleteOrder($request->id));
     }

@@ -10,20 +10,22 @@
       </button>
 
       <div id="navbarToggler" class="collapse navbar-collapse">
-        <ul v-if="user" class="navbar-nav">
-          <template v-if="user && user.role === 'admin' || user.role === 'superadmin'">
-            <li class="nav-item">
-              <b-link class="nav-link" :to="{ name: 'events' }">
-                Manage Events
-              </b-link>
-            </li>
+        <!-- User is adminable -->
+        <ul
+          v-if="user && user.is_adminable"
+          class="navbar-nav"
+        >
+          <li class="nav-item">
+            <b-link class="nav-link" :to="{ name: 'events' }">
+              Show Events
+            </b-link>
+          </li>
 
-            <li class="nav-item">
-              <b-link class="nav-link" :to="{ name: 'orders' }">
-                Manage Orders
-              </b-link>
-            </li>
-          </template>
+          <li class="nav-item">
+            <b-link class="nav-link" :to="{ name: 'orders' }">
+              Manage Orders
+            </b-link>
+          </li>
         </ul>
 
         <ul class="navbar-nav ml-auto">
@@ -68,21 +70,18 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import LocaleDropdown from './LocaleDropdown'
+// import LocaleDropdown from './LocaleDropdown'
 
 export default {
   components: {
-    LocaleDropdown
+    // LocaleDropdown
   },
-
   data: () => ({
     appName: window.config.appName
   }),
-
   computed: mapGetters({
     user: 'auth/user'
   }),
-
   methods: {
     async logout () {
       // Log out the user.

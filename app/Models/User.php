@@ -7,6 +7,7 @@ use App\Notifications\ResetPassword;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
@@ -20,7 +21,9 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -29,7 +32,8 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -47,45 +51,33 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $appends = [
-        'photo_url', 'role'
+        'photo_url',
+        'role',
+        'is_adminable',
     ];
 
     /**
-     * Relation Order model
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
 
     /**
-     * Relation Event model
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class);
     }
 
     /**
-     * Get the profile photo URL attribute.
-     *
-     * @return string
-     */
-    public function getPhotoUrlAttribute()
-    {
-        return 'https://www.gravatar.com/avatar/'.md5(strtolower($this->email)).'.jpg?s=200&d=mm';
-    }
-
-    /**
      * Get the oauth providers.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function oauthProviders()
+    public function oauthProviders(): HasMany
     {
         return $this->hasMany(OAuthProvider::class);
     }
@@ -93,7 +85,7 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Send the password reset notification.
      *
-     * @param  string  $token
+     * @param string $token
      * @return void
      */
     public function sendPasswordResetNotification($token)
@@ -114,7 +106,7 @@ class User extends Authenticatable implements JWTSubject
     /**
      * @return int
      */
-    public function getJWTIdentifier()
+    public function getJWTIdentifier(): int
     {
         return $this->getKey();
     }
@@ -122,7 +114,7 @@ class User extends Authenticatable implements JWTSubject
     /**
      * @return array
      */
-    public function getJWTCustomClaims()
+    public function getJWTCustomClaims(): array
     {
         return [];
     }
@@ -132,8 +124,26 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return string
      */
-    public function getRoleAttribute()
+    public function getRoleAttribute(): string
     {
         return $this->roles()->first()->name;
+    }
+
+    /**
+     * Get the profile photo URL attribute.
+     *
+     * @return string
+     */
+    public function getPhotoUrlAttribute(): string
+    {
+        return 'https://www.gravatar.com/avatar/' . md5(strtolower($this->email)) . '.jpg?s=200&d=mm';
+    }
+
+    /**
+     * @return string
+     */
+    public function getIsAdminableAttribute(): string
+    {
+        return $this->role === Role::ROLE_ADMIN || $this->role === Role::ROLE_SUPERADMIN;
     }
 }

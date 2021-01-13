@@ -16,7 +16,7 @@
           <div class="card">
             <div class="container">
               <div
-                v-if="events"
+                v-if="events.length"
                 class="row"
               >
                 <div
@@ -52,7 +52,26 @@
                 </div>
               </div>
               <div v-else>
-                <b-spinner label="Spinning" /> ...loading, please wait!
+                <b-spinner
+                  class="my-3"
+                  label="loading"
+                />
+              </div>
+
+              <div
+                v-if="!loading && data && currentPage !== data.last_page"
+                class="row"
+              >
+                <div class="col-12 text-center">
+                  <b-btn
+                    variant="info"
+                    class="mb-2"
+                    :disabled="busy"
+                    @click="loadMore"
+                  >
+                    <b-spinner v-if="busy" small type="grow" /> Load more
+                  </b-btn>
+                </div>
               </div>
             </div>
           </div>
@@ -60,11 +79,12 @@
       </div>
     </div>
 
-    <b-modal id="modal-image"
-             size="lg"
-             class="p-0"
-             hide-footer
-             @close="modalEvent = null"
+    <b-modal
+      id="modal-image"
+      size="lg"
+      class="p-0"
+      hide-footer
+      @close="modalEvent = null"
     >
       <img v-lazy="`https://picsum.photos/600/400/?random&dummyParam=${modalEvent}`" class="card-img-top" :alt="modalEvent">
     </b-modal>
@@ -168,9 +188,10 @@ import { mapGetters } from 'vuex'
 
 export default {
   metaInfo () {
-    return { title: this.$t('home') }
+    return { title: 'Events' }
   },
   data: () => ({
+    events: [],
     alert: {
       show: false,
       type: 'info',
@@ -179,6 +200,8 @@ export default {
     title: window.config.appName,
     modalEvent: null,
     loading: false,
+    busy: false,
+    currentPage: 1,
     form: {
       event: null,
       firstname: '',
@@ -197,12 +220,30 @@ export default {
   computed: mapGetters({
     authenticated: 'auth/check',
     user: 'auth/user',
-    events: 'user/events'
+    data: 'user/events'
   }),
   created () {
-    this.$store.dispatch('user/getEvents')
+    this.getEvents()
+  },
+  beforeDestroy () {
+    this.$store.dispatch('user/resetEvents')
   },
   methods: {
+    getEvents () {
+      this.busy = true
+
+      this.$store.dispatch('user/getEvents', this.currentPage)
+        .then(() => {
+          this.events.push(...this.data.data)
+        })
+        .finally(() => {
+          this.busy = false
+        })
+    },
+    loadMore () {
+      this.currentPage++
+      this.getEvents()
+    },
     onSubmit (evt) {
       this.loading = true
       evt.preventDefault()

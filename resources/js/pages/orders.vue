@@ -6,34 +6,13 @@
   >
     <template v-slot:header>
       <b-row>
-        <b-col cols="12" class="text-right">
-          <b-form-group class="mb-0">
-            <b-form-select
-              v-model="perPage"
-              size="sm"
-              :options="pageOptions"
-            />
-          </b-form-group>
+        <b-col cols="12">
+          Orders
         </b-col>
       </b-row>
     </template>
 
-    <template v-slot:footer>
-      <b-row v-if="orders && orders.length > perPage">
-        <b-col>
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            align="fill"
-            size="sm"
-            class="my-0"
-          />
-        </b-col>
-      </b-row>
-    </template>
-
-    <b-container fluid>
+    <b-container>
       <b-alert
         :variant="alert.type"
         dismissible
@@ -50,13 +29,8 @@
         show-empty
         small
         stacked="md"
-        :items="orders"
+        :items="items"
         :fields="fields"
-        :current-page="currentPage"
-        :per-page="perPage"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        :sort-direction="sortDirection"
       >
         <template v-slot:cell(name)="row">
           {{ row.item.firstname }} {{ row.item.secondname }}
@@ -67,11 +41,19 @@
             {{ row.detailsShowing ? 'Hide' : 'Show' }}
           </b-button>
 
-          <b-button variant="success" size="sm" @click="editOrder(row.item.id)">
+          <b-button
+            variant="success"
+            size="sm"
+            @click="editOrder(row.item.id)"
+          >
             Edit
           </b-button>
 
-          <b-button variant="danger" size="sm" @click="deleteOrder(row.item.id)">
+          <b-button
+            variant="danger"
+            size="sm"
+            @click="deleteOrder(row.item.id)"
+          >
             Delete
           </b-button>
         </template>
@@ -183,16 +165,35 @@
 
         <b-button
           variant="primary"
+          :disabled="loading"
           @click="saveOrder"
         >
-          Сохранить
+          <b-spinner v-if="loading" small type="grow" /> Сохранить
         </b-button>
       </b-form>
     </b-container>
+
+    <template v-slot:footer>
+      <b-row>
+        <b-col>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="center"
+            size="sm"
+            class="my-0"
+            @change="paginationEvent"
+          />
+        </b-col>
+      </b-row>
+    </template>
   </b-card>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   middleware: 'admin',
   name: 'Orders',
@@ -212,35 +213,43 @@ export default {
         { text: 'PhD', value: 3 }
       ],
       fields: [
-        { key: 'name', label: 'Person', sortable: true },
-        { key: 'email', label: 'email', sortable: true },
-        { key: 'actions', label: 'Actions' }
+        { key: 'name', label: 'Person' },
+        { key: 'email' },
+        { key: 'phone' },
+        { key: 'actions' }
       ],
       currentPage: 1,
+      totalRows: 0,
       perPage: 10,
-      pageOptions: [10, 25, 50],
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc'
+      loading: false
     }
   },
   computed: {
-    totalRows () {
-      return this.orders ? this.orders.length : 0
-    },
-    orders: function () {
-      return this.$store.state.user.orders
+    ...mapGetters({
+      data: 'user/orders'
+    }),
+    items () {
+      return this.data ? this.data.data : []
     }
   },
   created () {
-    this.$store.dispatch('user/getOrders')
+    this.getOrders()
+  },
+  beforeDestroy () {
+    this.$store.dispatch('user/resetOrders')
   },
   methods: {
+    getOrders () {
+      this.$store.dispatch('user/getOrders', this.currentPage)
+        .then(() => this.setPaginate())
+    },
     editOrder (id) {
       this.showEditForm = true
-      this.order = this.orders.find(order => order.id === id)
+      this.order = this.items.find(order => order.id === id)
     },
     saveOrder () {
+      this.loading = true
+
       this.$store.dispatch('user/storeOrder', this.order)
         .then((response) => {
           if (response.status === 200) {
@@ -250,6 +259,9 @@ export default {
             this.messageAlert('danger', response.data)
           }
         })
+        .finally(() => {
+          this.loading = false
+        })
     },
     deleteOrder (id) {
       this.$store.dispatch('user/deleteOrder', { id: id })
@@ -258,6 +270,15 @@ export default {
       this.alert.show = true
       this.alert.type = type
       this.alert.text = text
+    },
+    setPaginate () {
+      this.totalRows = this.data.total
+      this.currentPage = this.data.current_page
+      this.perPage = this.data.per_page
+    },
+    paginationEvent (page) {
+      this.currentPage = page
+      this.getOrders()
     }
   }
 }

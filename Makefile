@@ -1,20 +1,26 @@
 i:
-	composer install && npm i && php artisan migrate:refresh --seed
+	composer i && make dbs && npm i && make w
 
-start:
-	docker-compose up --build
+ri:
+	make cc && make rm && make i
 
-watch:
+rm:
+	rm -rf vendor && rm -rf node_modules && rm -rf bootstrap/cache/packages.php && rm -rf bootstrap/cache/services.php && rm -rf bootstrap/cache/config.php && rm -rf public/dist && rm -rf mix-manifest.json
+
+w:
 	npm run watch
 
-stop:
-	docker-compose down
+dbs:
+	php artisan migrate:fresh --seed
 
-serve:
-	php artisan serve
+cc:
+	php artisan clear && php artisan view:clear && php artisan cache:clear && php artisan config:cache && make cda
 
-share:
-	valet start && valet share
+cda:
+	composer dump-autoload
 
 test:
 	vendor/bin/phpunit
+
+share:
+	valet start && valet share

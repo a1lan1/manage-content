@@ -1,13 +1,12 @@
 import 'core-js'
 import 'regenerator-runtime/runtime'
+
 import Vue from 'vue'
 import store from '~/store'
 import router from '~/router'
 import i18n from '~/plugins/i18n'
 import App from '~/components/App'
 import BootstrapVue from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VueLazyload from 'vue-lazyload'
 
 import '~/plugins'

@@ -69,8 +69,8 @@ export default {
 
   data: () => ({
     form: new Form({
-      email: '',
-      password: ''
+      email: 'admin@admin.io',
+      password: 'secret'
     }),
     remember: false
   }),

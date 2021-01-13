@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-white">
+  <nav class="navbar navbar-expand-lg">
     <div class="container">
       <router-link :to="{ name: 'welcome' }" class="navbar-brand">
         {{ appName }}
@@ -11,15 +11,19 @@
 
       <div id="navbarToggler" class="collapse navbar-collapse">
         <ul v-if="user" class="navbar-nav">
-            <template v-if="user && user.role === 'admin' || user.role === 'superadmin'">
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{ name: 'events' }">Manage Events</b-link>
-                </li>
+          <template v-if="user && user.role === 'admin' || user.role === 'superadmin'">
+            <li class="nav-item">
+              <b-link class="nav-link" :to="{ name: 'events' }">
+                Manage Events
+              </b-link>
+            </li>
 
-                <li class="nav-item">
-                    <b-link class="nav-link" :to="{ name: 'orders' }">Manage Orders</b-link>
-                </li>
-            </template>
+            <li class="nav-item">
+              <b-link class="nav-link" :to="{ name: 'orders' }">
+                Manage Orders
+              </b-link>
+            </li>
+          </template>
         </ul>
 
         <ul class="navbar-nav ml-auto">
@@ -29,7 +33,6 @@
                href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             >
               <img :src="user.photo_url" class="rounded-circle profile-photo mr-1">
-              {{ user.name }}
             </a>
             <div class="dropdown-menu">
               <router-link :to="{ name: 'settings.profile' }" class="dropdown-item pl-3">

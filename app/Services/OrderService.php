@@ -59,11 +59,9 @@ class OrderService
     public function storeOrder(array $data): Model
     {
         $eventId = Arr::pull($data, 'event');
+        $order = $this->order->updateOrCreate($data);
 
-        $order = auth()->user()->is_adminable
-            ? $this->order->updateOrCreate($data)
-            : auth()->user()->orders()->updateOrCreate($data);
-
+        $order->user()->associate(auth()->id())->save();
         $order->event()->associate($eventId)->save();
 
         return $order;

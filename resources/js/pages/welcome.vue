@@ -79,6 +79,7 @@
       </div>
     </div>
 
+    <!-- Modals -->
     <b-modal
       id="modal-image"
       size="lg"
@@ -89,10 +90,15 @@
       <img v-lazy="`https://picsum.photos/600/400/?random&dummyParam=${modalEvent}`" class="card-img-top" :alt="modalEvent">
     </b-modal>
 
-    <b-modal id="modal-new-order" title="New order" size="md" hide-footer>
+    <b-modal
+      id="modal-new-order"
+      title="New order"
+      size="md"
+      hide-footer
+    >
       <b-form
         @submit="onSubmit"
-        @reset="onReset"
+        @reset="resetForm"
       >
         <b-form-group
           id="input-group-1"
@@ -224,6 +230,11 @@ export default {
   }),
   created () {
     this.getEvents()
+
+    if (this.authenticated) {
+      this.form.firstname = this.user.name
+      this.form.email = this.user.email
+    }
   },
   beforeDestroy () {
     this.$store.dispatch('user/resetEvents')
@@ -253,16 +264,13 @@ export default {
           this.$root.$emit('bv::hide::modal', 'modal-new-order')
           this.loading = false
 
-          if (response.status === 200) {
+          if (response && response.status === 200) {
             this.messageAlert('success', 'Ваша заявка отправлена!')
-          } else {
-            this.messageAlert('danger', response.data)
+            this.resetForm()
           }
         })
     },
-    onReset (evt) {
-      evt.preventDefault()
-
+    resetForm () {
       this.form.firstname = ''
       this.form.secondname = ''
       this.form.email = ''

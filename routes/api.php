@@ -8,12 +8,12 @@ Route::get('events', 'EventController@getEvents');
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('user-events', 'EventController@getEvents');
     Route::post('user-events/delete', 'EventController@deleteEvent');
+    Route::post('orders', 'OrderController@storeOrder');
 
     // Admin routes
     Route::group(['middleware' => ['role:admin|superadmin']], function () {
         // Orders
         Route::get('orders', 'OrderController@getOrders');
-        Route::post('orders', 'OrderController@storeOrder');
         Route::post('orders/delete', 'OrderController@deleteOrder');
     });
 

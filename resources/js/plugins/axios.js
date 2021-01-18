@@ -29,7 +29,7 @@ axios.interceptors.response.use(response => response, error => {
     Swal.fire({
       type: 'error',
       title: i18n.t('error_alert_title'),
-      text: i18n.t('error_alert_text'),
+      text: error.response.data.error,
       reverseButtons: true,
       confirmButtonText: i18n.t('ok'),
       cancelButtonText: i18n.t('cancel')

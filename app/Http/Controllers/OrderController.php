@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Mail\NewOrderMember;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\OrderRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
@@ -47,7 +49,19 @@ class OrderController extends Controller
      */
     public function storeOrder(OrderRequest $request): JsonResponse
     {
-        $order = $this->orderService->storeOrder($request->all());
+        DB::beginTransaction();
+
+        try {
+            $order = $this->orderService->storeOrder($request->all());
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json([
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         Mail::to(auth()->user())->send(new NewOrderMember($order));
 

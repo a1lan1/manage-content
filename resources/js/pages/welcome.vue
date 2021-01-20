@@ -175,7 +175,11 @@
           type="submit"
           variant="primary"
         >
-          {{ loading ? 'Отправляем...' : 'Отправить' }}
+          <b-spinner
+            v-if="loading"
+            small
+            type="grow"
+          /> {{ loading ? 'Sending...' : 'Send' }}
         </b-button>
 
         <b-button
@@ -265,7 +269,7 @@ export default {
           this.loading = false
 
           if (response && response.status === 200) {
-            this.messageAlert('success', 'Ваша заявка отправлена!')
+            this.messageAlert('success', 'Your order has been sent!')
             this.resetForm()
           }
         })

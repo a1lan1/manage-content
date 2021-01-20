@@ -5,24 +5,24 @@ namespace App\Http\Controllers;
 use App\Mail\NewOrderMember;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\OrderRequest;
+use App\Interfaces\OrderInterface;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\OrderRequest;
 use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
     /**
-     * @var OrderService
+     * @var OrderInterface
      */
     private $orderService;
 
     /**
      * OrderController constructor.
-     * @param OrderService $orderService
+     * @param OrderInterface $orderService
      */
-    public function __construct(OrderService $orderService)
+    public function __construct(OrderInterface $orderService)
     {
         $this->orderService = $orderService;
     }

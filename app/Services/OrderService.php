@@ -4,10 +4,11 @@ namespace App\Services;
 
 use App\Models\Order;
 use Illuminate\Support\Arr;
+use App\Interfaces\OrderInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class OrderService
+class OrderService implements OrderInterface
 {
     const PER_PAGE = 10;
 
